@@ -1,0 +1,30 @@
+FROM python:3.4
+
+WORKDIR /home/docker/code
+RUN apt-get update && apt-get install -y \ 
+        sqlite3 \ 
+        libmysqlclient-dev \ 
+        postgresql-client \ 
+        cron \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN pip install redis
+
+COPY requirements.txt /home/docker/code
+RUN pip install -r /home/docker/code/requirements.txt
+
+RUN touch /home/docker/code/cronjob.log
+RUN { \
+         echo 'cd /home/docker/code'; \
+         echo 'python manage.py >>/home/docker/code/cronjob.log 2>&1'; \
+} > /home/docker/code/runcron.sh
+
+RUN { \
+         echo ' * * * * * /home/docker/code/runcron.sh'; \
+} > /home/docker/code/cronfile
+# add (the rest of) our code
+COPY . /home/docker/code
+
+RUN crontab /home/docker/code/cronfile
+
+CMD ["tail", "-f","/home/docker/code/cronjob.log"]

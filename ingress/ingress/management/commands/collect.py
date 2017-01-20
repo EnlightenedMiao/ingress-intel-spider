@@ -40,18 +40,17 @@ def get_or_create_portal(portal):
         return None
 
     try:
-        obj_portal = Portal.objects.get(pk=portal['guid'])
+        obj_portal = Portal.objects.get(latE6=portal['latE6'],lngE6=portal['lngE6'])
         if obj_portal.team != portal['team'][0]:
             obj_portal.team = portal['team'][0]
-            obj_portal.save()
     except Portal.DoesNotExist:
-        obj_portal = Portal.objects.create(
-            guid=portal['guid'],
+        obj_portal = Portal(
             name=portal['name'],
             team=portal['team'][0],
             latE6=portal['latE6'],
             lngE6=portal['lngE6'],
         )
+    obj_portal.save()
     return obj_portal
 
 
@@ -72,21 +71,21 @@ class Command(BaseCommand):
         print('==={} ({:.0f} seconds ago)'.format(timems, time.time() - (timems / 1000)))
 
         plexts = utils.get_plexts(timems)
-        if 'success' not in plexts:
+        if 'result' not in plexts:
             print('Error in get_plexts()')
             print(plexts)
             return
 
-        for item in plexts['success']:
+        for item in plexts['result']:
             action = {
                 'guid': item[0],
                 'timestamp': item[1],
             }
             if _D['min_timems'] < item[1]:
                 _D['min_timems'] = item[1]
-            if 'plext' not in item[2] \
-                    or 'markup' not in item[2]['plext']:
-                continue
+            #if 'plext' not in item[2] \
+            #        or 'markup' not in item[2]['plext']:
+            #    continue
             markup = item[2]['plext']['markup']
 
             try:
@@ -102,6 +101,7 @@ class Command(BaseCommand):
             is_adding_mu = False
             is_secure = False
             mu_points = 0
+            player = markup[0]
             for x in markup:
                 if x[0] == 'PLAYER':
                     player = {
@@ -152,9 +152,10 @@ class Command(BaseCommand):
                 try:
                     obj_player = Player.objects.get(id=player['id'])
                 except Player.DoesNotExist:
-                    obj_player = Player.objects.create(**player)
+                    obj_player = Player(**player)
+                    obj_player.save()
                 if not Message.objects.filter(guid=action['guid']).exists():
-                    Message.objects.create(
+                    obj_message = Message(
                         guid=action['guid'],
                         text=text[:512],
                         player=player['id'],
@@ -162,11 +163,13 @@ class Command(BaseCommand):
                         timestamp=action['timestamp'],
                         is_secure=is_secure,
                     )
+                    #obj_message.save()
                 continue
 
-            if not player or not portal:
+            elif not player or not portal:
                 continue
-            if 'name' not in action:
+            elif 'name' not in action:
+                action['name'] = 'unknown'
                 continue
 
             obj_portal = get_or_create_portal(portal)
@@ -196,7 +199,8 @@ class Command(BaseCommand):
             try:
                 obj_player = Player.objects.get(id=player['id'])
             except Player.DoesNotExist:
-                obj_player = Player.objects.create(**player)
+                obj_player = Player(**player)
+                obj_player.save()
 
             if action['name'] == 'deployed' and resonator >= 8:
                 obj_player.over_lv8 = True
@@ -211,13 +215,14 @@ class Command(BaseCommand):
 
             if action['name'] == 'field':
                 if not MU.objects.filter(pk=action['guid']).exists():
-                    MU.objects.create(
+                    obj_MU = MU(
                         guid=action['guid'],
                         player=obj_player,
                         points=mu_points,
                         timestamp=action['timestamp'],
                         team=obj_player.team
                     )
+                    obj_MU.save()
 
             info = '{} {} {} {}'.format(player['id'], action['name'], resonator, portal['name'])
             print(info)
@@ -225,5 +230,5 @@ class Command(BaseCommand):
         ps = Portal.objects.all()
         ps = Action.objects.all()
 
-        if len(plexts['success']) >= 50:
+        if len(plexts['result']) >= 50:
             self.handle(*args, **options)

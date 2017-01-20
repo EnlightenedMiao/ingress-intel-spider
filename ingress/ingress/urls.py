@@ -1,7 +1,7 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 from . import views
 
-urlpatterns = patterns('',
+urlpatterns = [
     url(r'^$', views.home, name='ingress_home'),
 
     url(r'^actions/$', views.actions, name='ingress_actions'),
@@ -27,4 +27,4 @@ urlpatterns = patterns('',
 
     # this should be removed in the future
     url(r'^maps/([\.\w]+)/$', views.portal_detail, name='ingress_maps'),
-)
+]

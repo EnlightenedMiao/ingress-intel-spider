@@ -2,10 +2,11 @@ from urllib.parse import quote
 import datetime
 from django.db import models
 from django.utils.timezone import now
+import uuid
 
 
 class Portal(models.Model):
-    guid = models.CharField(max_length=40, primary_key=True)
+    guid = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     name = models.CharField(max_length=256)
     team = models.CharField(max_length=1, db_index=True)
     owner = models.CharField(max_length=40, blank=True)

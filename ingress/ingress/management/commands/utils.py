@@ -70,6 +70,10 @@ HEADERS = {
     "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/36.0.1985.125 Safari/537.36",
     "x-csrftoken": CSRF,
 }
+proxies = {
+  'http': 'http://192.168.125.42:1080',
+  'https': 'http://192.168.125.42:1080',
+}
 
 
 def _touch_need_update():
@@ -96,13 +100,14 @@ def get_plexts(timems):
         return {}
 
     try:
-        plexts = json.loads(r.text)
+        plexts = r.json()
     except:
         _touch_need_update()
         logging.exception('')
+        logging.exception(r.text)
         return {}
 
-    if 'success' not in plexts:
+    if 'result' not in plexts:
         _touch_need_update()
         logging.error('Error in get_plexts():')
         logging.info(plexts)

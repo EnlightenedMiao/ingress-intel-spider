@@ -22,9 +22,31 @@ SECRET_KEY = 'wOwcw@2pPi4LKJLKJ#a6g&^%^()*%=tp_xxx%lksdjf@ncz#-0v'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            os.path.join(BASE_DIR, 'myproject', 'myapp', 'templates')
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+ALLOWED_HOSTS = ['*']
 INTERNAL_IPS = (
     '127.0.0.1',
 )
@@ -62,12 +84,12 @@ WSGI_APPLICATION = 'ingress.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': '',
-        'NAME': '',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ingress_spider',
+        'USER': 'root',
+        'PASSWORD': 'ingress-is-great',
+        'HOST': 'ingress-mysql',
+        'PORT': '3306',
     }
 }
 
@@ -102,9 +124,9 @@ DIR_HOME = os.path.expanduser("~")
 DIR_INGRESS_CONF = os.path.join(DIR_HOME, '.ingress')
 
 # Change the following to real values in settings_local.py
-MIN_LAT = 40011769
-MAX_LAT = 40011769
-MIN_LNG = 116401091
-MAX_LNG = 116401091
+MIN_LAT = 39990797
+MAX_LAT = 40013548
+MIN_LNG = 116377745
+MAX_LNG = 116538182
 
 from .settings_local import *
