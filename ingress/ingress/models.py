@@ -233,3 +233,10 @@ class Message(models.Model):
             return '{} secs ago'.format(seconds)
         else:
             return '1 sec ago'
+
+
+class Accounts(models.Model):
+    google_username = models.CharField(max_length=64, required= False)
+    google_password = models.CharField(max_length=64, required = False)
+    ingress_SACSID = models.CharField(max_length=256, required=True)
+    ingress_csrf_token = models.CharField(max_length=256,required=True)
