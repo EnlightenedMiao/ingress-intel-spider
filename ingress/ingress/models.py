@@ -235,8 +235,13 @@ class Message(models.Model):
             return '1 sec ago'
 
 
-class Accounts(models.Model):
-    google_username = models.CharField(max_length=64, required= False)
-    google_password = models.CharField(max_length=64, required = False)
-    ingress_SACSID = models.CharField(max_length=256, required=True)
-    ingress_csrf_token = models.CharField(max_length=256,required=True)
+class Account(models.Model):
+    id = models.AutoField(primary_key=True)
+    google_username = models.CharField(max_length=64, blank=True, unique=True)
+    google_password = models.CharField(max_length=64, blank=True)
+    ingress_SACSID = models.CharField(max_length=1024)
+    ingress_csrf_token = models.CharField(max_length=1024)
+    is_valid = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.google_username

@@ -4,7 +4,33 @@ import time
 import json
 import requests
 from django.conf import settings
+from ingress.ingress.models import Account
 
+def load_cookies():
+    """return a list which has one or zero account
+    """
+    return Account.objects.filter(is_valid=True)[:1]
+
+
+def new_get_plexts():
+    valid_account = load_cookies()
+    if not valid_account:
+        valid_account=valid_account[0]
+        # valid_account.is_valid=False
+        valid_account.save()
+    else:
+        valid_account=valid_account[0]
+        COOKIES = {
+            "SACSID":valid_account.ingress_SACSID,
+            "csrftoken":valid_account.ingress_csrf_token,
+        }
+        spider_session = requests.Session()
+        AREA_LINK = "https://www.ingress.com/intel?ll=40.199855,116.38916&z=8"
+        r = spider_session.get(AREA_LINK,cookies=COOKIES)
+        pprint(r.text)
+        if r.status_code == 200:
+            logging.info('so far,so good')
+        return r
 
 def get_cookie_str():
     path_cookie = os.path.join(settings.DIR_INGRESS_CONF, 'cookie.txt')
