@@ -42,15 +42,15 @@ def get_plexts(timems):
         AREA_LINK = "https://www.ingress.com/intel?ll=40.199855,116.38916&z=8"
         r = spider_session.get(AREA_LINK,cookies=COOKIES)
         
-        valid_account.ingress_csrf_token = r.cookies['csrftoken']
-        valid_account.ingress_SACSID = r.cookies['SACSID']
-        COOKIES.update(r.cookies)
         
         if r.status_code != 200:
             logging.error('cookie invalid')
             valid_account.is_valid=False
             valid_account.save()
             return {}
+        valid_account.ingress_csrf_token = r.cookies['csrftoken']
+        valid_account.ingress_SACSID = r.cookies['SACSID']
+        COOKIES.update(r.cookies)
         version_match = re.search(r'/jsc/gen_dashboard_(\w*)', r.text) 
         PAYLOAD_V = version_match.group(1)
         PLEXTS_LINK = "https://www.ingress.com/r/getPlexts"
