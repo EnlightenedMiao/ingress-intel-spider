@@ -49,8 +49,6 @@ def get_plexts(timems):
             valid_account.save()
             return {}
         valid_account.ingress_csrf_token = r.cookies['csrftoken']
-        valid_account.ingress_SACSID = r.cookies['SACSID']
-        COOKIES.update(r.cookies)
         version_match = re.search(r'/jsc/gen_dashboard_(\w*)', r.text) 
         PAYLOAD_V = version_match.group(1)
         PLEXTS_LINK = "https://www.ingress.com/r/getPlexts"
