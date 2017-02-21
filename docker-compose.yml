@@ -6,8 +6,9 @@ services:
     container_name: ingress-mysql-01
     environment:
       - MYSQL_ROOT_PASSWORD=ingress-is-great
+      - MYSQL_DATABASE=ingress_spider
     volumes:
-      - /home/zhicheng.qi/mysql/data:/var/lib/mysql
+      - ./mysql/data:/var/lib/mysql
   ingress-web:
     build: .
     container_name: ingress-web-01
