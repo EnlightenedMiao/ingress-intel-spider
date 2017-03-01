@@ -7,7 +7,7 @@ from django.conf import settings
 from ingress.ingress.models import Account
 import re
 from bs4 import BeautifulSoup
-from third_party.worker import phantomjs
+from ingress.ingress.tasks import get_cookie
 
 def load_cookies():
     """return a list which has one or zero account
@@ -16,20 +16,21 @@ def load_cookies():
 
 def refresh_cookie(account_id):
     ingress_account = Account.objects.get(id=account_id)
-    async_result = phantomjs.get_cookie(account.google_username,account.google_password)
+    async_result = get_cookie.delay(ingress_account.google_username,ingress_account.google_password)
     # 后期可以改为异步的做法，让phantom的worker直接更新数据库里的cookie 
     timeout= 100
     job_time = 0
     while async_result.ready() is False :
-        timestart+=10
+        job_time+=10
         if job_time > timeout:
             return {'error':'job timeout'}
         time.sleep(10)
     if async_result.successful():
         result = json.loads(async_result.result)
-        ingress_account.ingress_SACSID = result['SACSID']
-        ingress_account.ingress_csrf_token = result['csrftoken']
-        ingress_account.payload_v = result['payload_v']
+        ingress_account.ingress_SACSID = result['data']['SACSID']
+        ingress_account.ingress_csrf_token = result['data']['csrftoken']
+        ingress_account.ingress_payload_v = result['data']['payload_v']
+        ingress_account.is_valid = True
         ingress_account.save()
         return True
 
@@ -60,7 +61,7 @@ def get_plexts(timems):
         "maxTimestampMs": -1,
         "tab": "all",
         "ascendingTimestampOrder": True,
-        "v": valid_account.payload_v,
+        "v": valid_account.ingress_payload_v,
 
     }
     payload.update({'minTimestampMs': timems})

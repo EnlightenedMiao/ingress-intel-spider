@@ -19,7 +19,7 @@ services:
       - ingress-rabbit
     links:
       - ingress-mysql
-      - ingress-rabbit
+      - ingress-rabbit:rabbit
   ingress-rabbit:
     image: rabbitmq:3
     container_name: ingress-rabbit-01
