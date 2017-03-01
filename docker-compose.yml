@@ -8,7 +8,7 @@ services:
       - MYSQL_ROOT_PASSWORD=ingress-is-great
       - MYSQL_DATABASE=ingress_spider
     volumes:
-      - ./mysql/data:/var/lib/mysql
+      - ~/mysql/data:/var/lib/mysql
   ingress-web:
     build: .
     container_name: ingress-web-01
@@ -16,5 +16,17 @@ services:
       - "9002:80"
     depends_on:
       - ingress-mysql
+      - ingress-rabbit
     links:
       - ingress-mysql
+      - ingress-rabbit
+  ingress-rabbit:
+    image: rabbitmq:3
+    container_name: ingress-rabbit-01
+  ingress-phantomjs-worker:
+    build: ingress-google-auth
+    container_name: ingress-phantomjs-worker-01
+    depends_on:
+      - ingress-rabbit
+    links:
+      - ingress-rabbit:rabbit
