@@ -241,6 +241,7 @@ class Account(models.Model):
     google_password = models.CharField(max_length=64, blank=True)
     ingress_SACSID = models.CharField(max_length=1024)
     ingress_csrf_token = models.CharField(max_length=1024)
+    ingress_payload_v = models.CharField(max_length=64)
     is_valid = models.BooleanField(default=False)
 
     def __str__(self):
