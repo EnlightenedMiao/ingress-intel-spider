@@ -45,5 +45,6 @@ WORKDIR /home/docker/code/
 
 # add (the rest of) our code
 COPY . /home/docker/code/
+RUN python manage.py collectstatic --noinput
 EXPOSE 80
-CMD ["supervisord", "-n"]
+CMD ["/bin/sh","start-web.sh"]

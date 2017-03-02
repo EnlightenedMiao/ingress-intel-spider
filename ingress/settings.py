@@ -98,7 +98,7 @@ DATABASES = {
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE='Asia/Shanghai'
 
 USE_I18N = True
 
@@ -112,6 +112,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "ingress/media/")
+STATIC_ROOT = os.path.join(BASE_DIR, "ingress/static/")
 
 GOOGLE_APP_SECRET_KEY = 'xxx'
 BAIDU_APP_SECRET_KEY = 'xxx'
