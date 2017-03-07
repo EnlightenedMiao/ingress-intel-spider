@@ -81,6 +81,11 @@ def get_plexts(timems):
     r = spider_session.post(PLEXTS_LINK,cookies=COOKIES,data=json.dumps(payload),headers=HEADERS)
     try:
         plexts = r.json()
+        if 'result' not in plexts:
+            valid_account.is_valid=False
+            valid_account.save()
+            # 实际上，我并不知道这里递归会不会有问题，暂时这么写吧
+            return get_plexts(timems)
     except:
         valid_account.is_valid=False
         valid_account.save()
