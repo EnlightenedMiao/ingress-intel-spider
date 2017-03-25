@@ -2,8 +2,8 @@ import logging
 import time
 from django.core.management.base import BaseCommand
 from django.utils.timezone import now
-from ingress.ingress.models import Portal, Action, Player, MU, Message
-from ingress.ingress.utils import within_range
+from ingress.models import Portal, Action, Player, MU, Message
+from ingress.utils import within_range
 from . import utils
 
 
@@ -56,10 +56,6 @@ class Command(BaseCommand):
     help = 'Collect Ingress Info'
 
     def handle(self, *args, **options):
-        if utils.cookie_need_update():
-            logging.error('need to update cookie and others')
-            return
-
         _D['_'] += 1
         if _D['_'] > 8:
             return

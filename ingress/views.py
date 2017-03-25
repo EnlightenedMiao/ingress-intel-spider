@@ -38,14 +38,14 @@ def actions_player(request, pid):
     return render(request, "ingress/actions.html", context)
 
 
-def actions_portal(request, guid, action_name=None):
+def actions_portal(request, uuid, action_name=None):
     context = {}
     try:
-        context['portal'] = Portal.objects.get(guid=guid)
+        context['portal'] = Portal.objects.get(guid=uuid)
     except Portal.DoesNotExist:
         raise Http404()
     one_month_ago = now() - datetime.timedelta(days=30)
-    kwargs = {'portal__guid': guid, 'added__gt': one_month_ago}
+    kwargs = {'portal__guid': uuid, 'added__gt': one_month_ago}
     if action_name:
         kwargs['name'] = action_name
     context['actions'] = Action.objects.filter(**kwargs).order_by('-added')[:100]
@@ -130,10 +130,10 @@ def search(request):
     return render(request, "ingress/search.html", context)
 
 
-def portal_detail(request, guid):
+def portal_detail(request, uuid):
     context = {}
     try:
-        context['portal'] = Portal.objects.get(guid=guid)
+        context['portal'] = Portal.objects.get(guid=uuid)
     except Portal.DoesNotExist:
         raise Http404()
     return render(request, "ingress/portal_detail.html", context)
