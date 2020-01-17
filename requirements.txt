@@ -1,4 +1,4 @@
-Django==1.10.5
+django>=1.11.27
 configparser==3.5.0
 mysqlclient==1.3.9
 requests==2.12.4
